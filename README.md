@@ -10,10 +10,11 @@ Requires Node.js 22.20+ and Git.
 
 ```sh
 npm install --global https://github.com/josh-borseth-fp-ai/benedict/releases/latest/download/benedict.tgz
+cd your-repo
 benedict setup
 ```
 
-`benedict setup` installs the skill for your coding agents. Rerun both commands to upgrade. pnpm and Bun work too: `pnpm add --global <url>` or `bun add --global <url>`.
+`benedict setup` installs the skill into the repository, under `.agents/skills/benedict/` and each selected agent's skill folder, such as `.claude/skills/benedict/`. Commit those files so everyone who clones the repository gets the skill. Nothing is installed in your home directory. Rerun both commands to upgrade, then commit the updated skill. pnpm and Bun work too: `pnpm add --global <url>` or `bun add --global <url>`.
 
 ## Use it
 
@@ -40,7 +41,7 @@ benedict skill <name> --base <commit>    # print a review skill
 benedict check findings.json             # validate draft findings
 benedict publish findings.json --pr <PR URL> --confidence 4 --decision approve|comment [--dry-run]
 
-benedict setup                           # install the skill
+benedict setup                           # install the skill into this repository
 benedict sync                            # fetch organization skills
 ```
 

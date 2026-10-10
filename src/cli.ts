@@ -111,19 +111,16 @@ const setupCommand = Command.make("setup", {
   organization: Flag.String("organization").pipe(Flag.optional, Flag.withDescription("Organization skills Git URL or local repository path")),
   ref: Flag.String("ref").pipe(Flag.optional, Flag.withDescription("Organization branch, tag or commit; defaults to HEAD")),
   agent: Flag.String("agent").pipe(Flag.atLeast(0), Flag.withDescription("Agent to install the skill for; repeat, or use '*' for all supported agents")),
-  global: Flag.Boolean("global").pipe(Flag.withDefault(false), Flag.withDescription("Install for this user across projects (the default)")),
-  project: Flag.Boolean("project").pipe(Flag.withDefault(false), Flag.withDescription("Install the skill into this repository")),
   yes: Flag.Boolean("yes").pipe(Flag.withDefault(false), Flag.withDescription("Skip installer prompts; requires explicit --agent selections")),
   skipSkills: Flag.Boolean("skip-skills").pipe(Flag.withDefault(false), Flag.withDescription("Configure and sync organization skills only; keep the existing Benedict skill installation"))
 }, Effect.fn(function*(flags) {
-  if (flags.global && flags.project) return yield* Effect.fail(new Error("--global and --project cannot be combined."))
   const result = yield* setup({
     repo: flags.repo,
     organization: Option.getOrUndefined(flags.organization), ref: Option.getOrUndefined(flags.ref),
-    project: flags.project, agents: flags.agent, yes: flags.yes, skipSkills: flags.skipSkills
+    agents: flags.agent, yes: flags.yes, skipSkills: flags.skipSkills
   })
-  yield* Console.log(`${result.skillInstalled ? `Installed the Benedict skill (${result.scope} scope).` : "Skill installation skipped."}\n${result.organization ? `Organization revision: ${result.organization.revision}\nReview and commit ${configPath} and ${lockPath}.` : `No organization configured; built-in and ${skillsPath} skills apply.`}\nAsk your coding agent to use the benedict skill to review your change.`)
-})).pipe(Command.withDescription("Install the bundled skill and connect this repository to organization knowledge."))
+  yield* Console.log(`${result.skillInstalled ? `Installed the Benedict skill into ${result.repository}. Commit it with the repository.` : "Skill installation skipped."}\n${result.organization ? `Organization revision: ${result.organization.revision}\nReview and commit ${configPath} and ${lockPath}.` : `No organization configured; built-in and ${skillsPath} skills apply.`}\nAsk your coding agent to use the benedict skill to review your change.`)
+})).pipe(Command.withDescription("Install the bundled skill into this repository and connect it to organization knowledge."))
 
 const publishCommand = Command.make("publish", {
   repo: rangeFlags.repo,
